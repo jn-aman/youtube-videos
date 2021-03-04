@@ -22,8 +22,6 @@ const port = process.env.PORT || 3000;
 
 const env = process.env.NODE_ENV || 'development';
 
-DB.sequelize.sync({ force: false });
-
 if (env === 'production') {
   app.use(morgan('combined', { stream }));
   app.use(cors({ origin: 'your.domain.com', credentials: true }));
@@ -31,6 +29,14 @@ if (env === 'production') {
   app.use(morgan('dev', { stream }));
   app.use(cors({ origin: true, credentials: true }));
 }
+DB.sequelize.sync({ force: false });
+DB.Videos.sync({ force: false })
+  .then(result => {
+    logger.info(result);
+  })
+  .catch(err => {
+    logger.error(err);
+  });
 
 app.use(hpp());
 app.use(helmet());
